@@ -27,8 +27,7 @@ https.get(url, function(res){
     console.log("Got an error: ", e);
 });
 
-// need a pre-populated river list
-
+// need a pre-populated river list (mvp complete with 2 rivers)
 
 // parse usgs json and upload to db
 //json.forEach(function);
@@ -45,19 +44,30 @@ let db = new sqlite3.Database('../levels.db', sqlite3.OPEN_READWRITE, (err) => {
     console.log('Connected to the levels database.');
 });
 
-let sql = "SELECT * FROM levels;";
-
 // execute each sql query in order
 db.serialize(function() {
+    let sql;    // sql query variable
+
+    /* see all levels rows */
+    sql = "SELECT * FROM levels;";
     db.get(sql, function(err, rows) {
         console.log(err);
         console.log(rows);
     });
+
+    /* see all rivers rows */
+    sql = "SELECT * FROM rivers;";
+    db.get(sql, function(err, rows) {
+        console.log(err);
+        console.log(rows);
+    });
+
 });
 
-    db.close((err) => {
-        if (err) {
-            console.error(err.message);
-        }
-        console.log('Close the database connection.');
+/* Close database */
+db.close((err) => {
+    if (err) {
+        console.error(err.message);
+    }
+    console.log('Close the database connection.');
 });

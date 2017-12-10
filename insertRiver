@@ -1,9 +1,0 @@
-INSERT INTO rivers (
-	siteName,
-	defaultTimeZone,
-	unitCode )
-VALUES (
-	"CLEAR CREEK AT GOLDEN, CO",
-	"MST",
-	"f3/s"
-)
