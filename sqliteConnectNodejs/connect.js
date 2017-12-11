@@ -10,9 +10,13 @@ const https = require('https');
 // sqlite3 to connect to db, .verbose() can be removed to reduce the stack trace
 const sqlite3 = require('sqlite3').verbose();
 
+function updateDbStart() {
+    getData();
+}
+
 /** json from waterservices.usgs.gov */
 function getData() {
-    var url = "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09058000,06719505&parameterCd=00060&siteStatus=all"
+    var url = "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09058000,06719505&parameterCd=00060&siteStatus=all";
 
     // json response variable
     var usgsJSON;
@@ -44,63 +48,32 @@ function insertValues(db, usgs) {
             /* insert new json data */
             var level = usgs.value.timeSeries[i].values[0].value[0].value;
             var dateTime = usgs.value.timeSeries[i].values[0].value[0].dateTime;
+            var siteCode = usgs.value.timeSeries[i].sourceInfo.siteCode[0].value;
             console.log(level);
             console.log(dateTime);
+            console.log(siteCode);
 
             //TODO turn into function, add logic to prevent same data added, webstorm hints
-            /* insert data into table */
-            db.run(`INSERT INTO levels (levelValue, dateTime) VALUES (?,?)`, [level, dateTime], function(err) {
+
+            /* grab correct foreign key for insert below */
+            let sql = `SELECT RiverId FROM rivers WHERE siteCode = ?`;
+            db.get(sql, [siteCode], (err, row) => {
                 if (err) {
-                    return console.log(err.message);
+                    console.error(err.message);
                 }
-                // get the last insert id
-                console.log(`A row has been inserted with rowid ${this.lastID}`);
-            });
+                console.log("RiverId", row.RiverId);
 
+                /* insert data into table */
+                db.run(`INSERT INTO levels (levelValue, dateTime, riverId) VALUES (?,?,?)`, [level, dateTime, row.RiverId], function(err) {
+                    if (err) {
+                        console.error(err.message);
+                    }
+                    // get the last insert id
+                    console.log(`A row has been inserted into levels: levelId = ${this.lastID}`);
+                });
+            });
         }
-
-        /** debugging display of results of tables */
-        /* display all levels rows */
-        sql = "SELECT * FROM levels;";
-        db.all(sql, [], (err, rows) => {
-            if (err) {
-                console.error(err.message);
-            }
-            rows.forEach((row) => {
-                console.log(row);
-            });
-        });
-
-        /* display one levels row */
-        sql = "SELECT * FROM levels;";
-        db.get(sql, function(err, rows) {
-            if (err) {
-                console.error(err.message);
-            }
-            console.log(rows);
-        });
-
-        /* display all rivers rows */
-        sql = "SELECT * FROM rivers;";
-        db.all(sql, [], function(err, rows) {
-            if (err) {
-                console.error(err.message);
-            }
-            rows.forEach((row) => {
-                console.log(row);
-            });
-        });
-
     });
-
-    /* Close database */
-    db.close((err) => {
-        if (err) {
-            console.error(err.message);
-        }
-        console.log('Close connection to database');
-    });
-
 }
 
 /** sqlite db modify with json data */
@@ -116,13 +89,30 @@ function dbUtility(usgs) {
         }
         console.log('Open connection to database:', dbSource);
 
-        insertValues(db, usgs);
-    });
+        insertValues(db, usgs, function() {
+            /** debugging display of results of tables */
+            console.log("Display current tables =========================");
+            /* display all levels rows */
+            var sql = "SELECT * FROM levels;";
+            db.all(sql, [], (err, rows) => {
+                if (err) {
+                    console.error(err.message);
+                }
+                rows.forEach((row) => {
+                    console.log(row);
+                });
+            });
 
+            /* Close database */
+            db.close((err) => {
+                if (err) {
+                    console.error(err.message);
+                }
+                console.log('Close connection to database');
+            });
+        });
+    });
 }
 
 // main start
-getData();
-
-
-
+updateDbStart();
