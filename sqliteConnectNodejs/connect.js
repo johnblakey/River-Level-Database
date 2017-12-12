@@ -109,10 +109,7 @@ function insertSetup(db, usgs) {
 
         for (var i in usgs.value.timeSeries) {
             /* insert new json data */
-            var level = usgs.value.timeSeries[i].values[0].value[0].value;
-            var dateTime = usgs.value.timeSeries[i].values[0].value[0].dateTime;
-            var siteCode = usgs.value.timeSeries[i].sourceInfo.siteCode[0].value;
-
+            // Note this is a closure to allow the for loop 'i' to be captured
             (function(counter) {
                 var level = usgs.value.timeSeries[counter].values[0].value[0].value;
                 var dateTime = usgs.value.timeSeries[counter].values[0].value[0].dateTime;
