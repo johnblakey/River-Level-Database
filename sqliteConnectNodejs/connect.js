@@ -11,11 +11,11 @@ const https = require('https');
 const sqlite3 = require('sqlite3').verbose();
 
 function updateDbStart() {
-    getData();
+    getJSON();
 }
 
 /** json from waterservices.usgs.gov */
-function getData() {
+function getJSON() {
     var url = "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09058000,06719505&parameterCd=00060&siteStatus=all";
 
     // json response variable
@@ -30,7 +30,7 @@ function getData() {
 
         response.on('end', function(){
             usgsJSON = JSON.parse(body);
-            dbUtility(usgsJSON);
+            dbOpen(usgsJSON);
         });
     }).on('error', function(err){
         console.error(err.message);
@@ -38,7 +38,7 @@ function getData() {
 }
 
 /** sqlite db modify with json data */
-function dbUtility(usgs) {
+function dbOpen(usgs) {
 
     // need a pre-populated river list (mvp complete with 2 rivers)
 
@@ -50,12 +50,12 @@ function dbUtility(usgs) {
         }
         console.log('Open connection to database:', dbSource);
 
-        insertValues(db, usgs);
+        insertSetup(db, usgs);
 
     });
 }
 
-function dbInsert(db, siteCode, level, dateTime) {
+function dbInsert(db, siteCode, level, dateTime, returnList, returnCount) {
     /* grab correct foreign key for insert below */
     let sql = `SELECT RiverId FROM rivers WHERE siteCode = ?`;
     db.get(sql, [siteCode], level, dateTime, (err, row) => {
@@ -73,6 +73,14 @@ function dbInsert(db, siteCode, level, dateTime) {
             }
             // get the last insert id
             console.log(`A row has been inserted into levels: levelId = ${this.lastID}`);
+
+            returnList.push(0);
+            console.log("returnList.length:", returnList.length);
+            if (returnList.length === returnCount) {
+                console.log("returnList.length now will close db:", returnList.length);
+                close(db);
+            }
+
         });
     });
 }
@@ -99,11 +107,16 @@ function close(db) {
     });
 }
 
-function insertValues(db, usgs) {
+function insertSetup(db, usgs) {
     /* execute each sql query in order */
     db.serialize(function() {
         console.log("JSON received, one test level value: ", usgs.value.timeSeries[1].values[0].value[0].value);
         // iterate through given series
+        returnCount = usgs.value.timeSeries.length;
+        console.log("returnCount:", returnCount);
+        returnList = [];
+        console.log("returnList.legnth:", returnList.length);
+
         for (var i in usgs.value.timeSeries) {
             /* insert new json data */
             var level = usgs.value.timeSeries[i].values[0].value[0].value;
@@ -119,8 +132,7 @@ function insertValues(db, usgs) {
                 var dateTime = usgs.value.timeSeries[counter].values[0].value[0].dateTime;
                 var siteCode = usgs.value.timeSeries[counter].sourceInfo.siteCode[0].value;
 
-                // logic to close db after loop is complete
-                dbInsert(db, siteCode, level, dateTime);
+                dbInsert(db, siteCode, level, dateTime, returnList, returnCount);
 
             })(i);
         }
