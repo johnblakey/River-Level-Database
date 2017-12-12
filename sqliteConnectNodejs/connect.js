@@ -1,7 +1,7 @@
 /**
  * Created by jb on 12/9/17.
  * http://www.sqlitetutorial.net/sqlite-nodejs/connect/
- * // refactor into separate files eventually
+ * TODO refactor into separate files
  */
 
 // https package for getting json data
