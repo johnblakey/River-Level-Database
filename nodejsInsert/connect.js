@@ -43,7 +43,7 @@ function dbOpen(usgs) {
     // need a pre-populated river list (mvp complete with 2 rivers)
 
     /* open database from local file */
-    let dbSource = "../levels.db";
+    let dbSource = "../dbRiverLevel/levels.db";
     let db = new sqlite3.Database(dbSource, sqlite3.OPEN_READWRITE, (err) => {
         if (err) {
             console.error(err.message);
