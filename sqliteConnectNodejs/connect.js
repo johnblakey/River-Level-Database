@@ -62,22 +62,15 @@ function dbInsert(db, siteCode, level, dateTime, returnList, returnCount) {
         if (err) {
             console.error(err.message);
         }
-        console.log("RiverId", row.RiverId);
-        console.log("level", level);
-        console.log("dateTime", dateTime);
-
         /* insert data into table */
         db.run(`INSERT INTO levels (levelValue, dateTime, riverId) VALUES (?,?,?)`, [level, dateTime, row.RiverId], function(err) {
             if (err) {
                 console.error(err.message);
             }
             // get the last insert id
-            console.log(`A row has been inserted into levels: levelId = ${this.lastID}`);
-
+            console.log(`levels table insertion added LevelId: ${this.lastID}`);
             returnList.push(0);
-            console.log("returnList.length:", returnList.length);
             if (returnList.length === returnCount) {
-                console.log("returnList.length now will close db:", returnList.length);
                 close(db);
             }
 
@@ -87,7 +80,7 @@ function dbInsert(db, siteCode, level, dateTime, returnList, returnCount) {
 
 function close(db) {
     /** debugging display of results of tables */
-    console.log("Display current tables =========================");
+    console.log("Display current levels table =========================");
     /* display all levels rows */
     sql = "SELECT * FROM levels;";
     db.all(sql, [], (err, rows) => {
@@ -110,22 +103,15 @@ function close(db) {
 function insertSetup(db, usgs) {
     /* execute each sql query in order */
     db.serialize(function() {
-        console.log("JSON received, one test level value: ", usgs.value.timeSeries[1].values[0].value[0].value);
-        // iterate through given series
+        // variables to track successful insertions
         returnCount = usgs.value.timeSeries.length;
-        console.log("returnCount:", returnCount);
         returnList = [];
-        console.log("returnList.legnth:", returnList.length);
 
         for (var i in usgs.value.timeSeries) {
             /* insert new json data */
             var level = usgs.value.timeSeries[i].values[0].value[0].value;
             var dateTime = usgs.value.timeSeries[i].values[0].value[0].dateTime;
             var siteCode = usgs.value.timeSeries[i].sourceInfo.siteCode[0].value;
-            console.log("Iteration:", i);
-            console.log(level);
-            console.log(dateTime);
-            console.log(siteCode);
 
             (function(counter) {
                 var level = usgs.value.timeSeries[counter].values[0].value[0].value;
