@@ -56,24 +56,43 @@ function dbOpen(usgs) {
 }
 
 function dbInsert(db, siteCode, level, dateTime, returnList, returnCount) {
-    /* grab correct foreign key for insert below */
+    /* copy correct foreign key for insert below */
     let sql = `SELECT RiverId FROM rivers WHERE siteCode = ?`;
-    db.get(sql, [siteCode], level, dateTime, (err, row) => {
+    db.get(sql, [siteCode], level, dateTime, (err, riverRow) => {
         if (err) {
             console.error(err.message);
         }
-        /* insert data into table */
-        db.run(`INSERT INTO levels (levelValue, dateTime, riverId) VALUES (?,?,?)`, [level, dateTime, row.RiverId], function(err) {
+        /* check if dateTime for siteCode already exists */
+        let sql = `SELECT dateTime FROM levels INNER JOIN rivers ON levels.riverId = rivers.RiverId WHERE siteCode = ?`;
+        db.get(sql, [siteCode], level, dateTime, (err, levelRow) => {
             if (err) {
                 console.error(err.message);
             }
-            // get the last insert id
-            console.log(`levels table insertion added LevelId: ${this.lastID}`);
-            returnList.push(0);
-            if (returnList.length === returnCount) {
-                close(db);
+            if (levelRow === undefined) {
+                console.log("dateTime does not exist in levels table (insert data)");
+                /* insert data into table */
+                sql = `INSERT INTO levels (levelValue, dateTime, riverId) VALUES (?,?,?)`;
+                db.run(sql, [level, dateTime, riverRow.RiverId], function(err) {
+                    if (err) {
+                        console.error(err.message);
+                    }
+                    // get the last insert id
+                    console.log(`levels table insertion added LevelId: ${this.lastID}`);
+                    // send end signal and check if all end signals were received
+                    returnList.push(0);
+                    if (returnList.length === returnCount) {
+                        close(db);
+                    }
+                });
+            } else {    // dateTime exists
+                let message = "River level entry already exists (do not insert data), datTime:";
+                console.log(message, levelRow);
+                // send end signal and check if all end signals were received
+                returnList.push(0);
+                if (returnList.length === returnCount) {
+                    close(db);
+                }
             }
-
         });
     });
 }
