@@ -16,7 +16,7 @@ function updateDbStart() {
 
 /** json from waterservices.usgs.gov */
 function getJSON() {
-    var url = "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09058000,06719505&parameterCd=00060&siteStatus=all";
+    var url = "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09058000,06719505,07094500&parameterCd=00060&siteStatus=all";
 
     // json response variable
     var usgsJSON;
@@ -62,6 +62,7 @@ function dbInsert(db, siteCode, level, dateTime, returnList, returnCount) {
         if (err) {
             console.error(err.message);
         }
+        console.log(riverRow.RiverId);
         /* check if dateTime for siteCode already exists */
         let sql = `SELECT dateTime FROM levels INNER JOIN rivers ON levels.riverId = rivers.RiverId WHERE siteCode = ?`;
         db.get(sql, [siteCode], level, dateTime, (err, levelRow) => {
@@ -99,9 +100,9 @@ function dbInsert(db, siteCode, level, dateTime, returnList, returnCount) {
 
 function close(db) {
     /** debugging display of results of tables */
-    console.log("Display current levels table =========================");
+    console.log("======== levels table entries ========");
     /* display all levels rows */
-    sql = "SELECT * FROM levels;";
+    let sql = "SELECT * FROM levels;";
     db.all(sql, [], (err, rows) => {
         if (err) {
             console.error(err.message);

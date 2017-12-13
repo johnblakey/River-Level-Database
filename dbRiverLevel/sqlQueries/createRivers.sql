@@ -1,5 +1,6 @@
 CREATE TABLE "rivers" ( 
 [RiverId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
-[siteName] NVARCHAR(256) NOT NULL, 
-[zoneAbbreviation] NVARCHAR(256) NOT NULL,
-[unitCode] NVARCHAR(32) NOT NULL );
+[siteName] NVARCHAR(128) NOT NULL, 
+[defaultTimezone] NVARCHAR(32) NOT NULL,
+[unitCode] NVARCHAR(32) NOT NULL,
+[siteCode] NVARCHAR(32) NOT NULL);
