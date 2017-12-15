@@ -8,5 +8,5 @@ var http = require('http');
 http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.end('Hello sdcommander!\n');
-}).listen(200, "0.0.0.0");
-console.log('Server running at http://riverlevel:200/');
+}).listen(2000, "0.0.0.0");
+console.log('Server running at http://riverlevel:2000/');
