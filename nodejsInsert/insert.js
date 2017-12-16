@@ -65,20 +65,13 @@ function dbInsert(db, siteCode, level, dateTime, returnList, returnCount) {
         console.log(riverRow.RiverId);
         /* check if dateTime for siteCode already exists */
         let sql = `SELECT dateTime FROM levels INNER JOIN rivers ON levels.riverId = rivers.RiverId WHERE siteCode = ? AND dateTime = ?`;
-        db.get(sql, [siteCode], [dateTime], level, dateTime, (err, levelRow) => {
+        db.get(sql, [siteCode, dateTime], level, dateTime, (err, levelRow) => {
             if (err) {
                 console.error(err.message);
             }
-            if (levelRow.dateTime === dateTime) {
-                let message = "River level entry already exists (do not insert data), datTime:";
-                console.log(message, levelRow);
-                // send end signal and check if all end signals were received
-                returnList.push(0);
-                if (returnList.length === returnCount) {
-                    close(db);
-                }
-            } else {
-                console.log("dateTime does not exist in levels table (insert data)");
+	    else if (levelRow === undefined) {
+		let message = "dateTime does not exist in levels table (insert data), dateTime:%s";
+                console.log(message, dateTime);
                 /* insert data into table */
                 sql = `INSERT INTO levels (levelValue, dateTime, riverId) VALUES (?,?,?)`;
                 db.run(sql, [level, dateTime, riverRow.RiverId], function(err) {
@@ -94,6 +87,22 @@ function dbInsert(db, siteCode, level, dateTime, returnList, returnCount) {
                     }
                 });
             }
+ 	    else if (levelRow.dateTime === dateTime) {
+                let message = "River level entry already exists (do not insert data), dateTime:";
+                console.log(message, levelRow.dateTime);
+                // send end signal and check if all end signals were received
+                returnList.push(0);
+                if (returnList.length === returnCount) {
+                    close(db);
+                }
+            } 
+	    else if (levelRow.dateTime !== dateTime) {
+		let message = "dateTime does not exist in levels table and this function needs to be created to (insert data), levelRow:%s, dateTime:%s";
+                console.log(message, levelRow.dateTime, dateTime);
+            }
+	    else {
+		console.error("Error in insertion logic, an invalid else was reached");
+	    }
         });
     });
 }
