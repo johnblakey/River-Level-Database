@@ -99,18 +99,6 @@ function dbInsert(db, siteCode, level, dateTime, returnList, returnCount) {
 }
 
 function close(db) {
-    /** debugging display of results of tables */
-    console.log("======== levels table entries ========");
-    /* display all levels rows */
-    let sql = "SELECT * FROM levels;";
-    db.all(sql, [], (err, rows) => {
-        if (err) {
-            console.error(err.message);
-        }
-        rows.forEach((row) => {
-            console.log(row);
-        });
-    });
     /* Close database */
     db.close((err) => {
         if (err) {
