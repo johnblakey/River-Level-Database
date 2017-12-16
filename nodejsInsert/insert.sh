@@ -4,12 +4,13 @@
 # Description: run insert.js to insert new values into 
 # sqlite database on the Raspberry Pi.
 
-now="$(date +'%d/%m/%Y')"
+now="$(date +'%d/%m/%Y_%H-%M-%S')"
 
-printf "\n==============================\n" >> insert.log
-printf "Start db levels insertion at $now\n" >> insert.log
+# insert river level values into sqlite db
+# For debugging change the '>' to '>>' record all entries in the file
+nodejs ~/Development/Production/River-Level-Database/nodejsInsert/insert.js > /home/jb/Logs/insert.log 
 
-# insert rivel level values into sqlite db
-nodejs insert.js >> insert.log
+printf '%s\n' "--------------------------------------------------" >> /home/jb/Logs/insert.log
+printf "Completed levels insertion at $now\n\n" >> /home/jb/Logs/insert.log
+printf "========================================================\n" >> /home/jb/Logs/insert.log
 
-printf "==============================\n" >> insert.log
