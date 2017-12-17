@@ -1,4 +1,8 @@
 # River-Level-Database
-Sqlite database to hold water values from the USGS restful API.
+Sqlite database to save water values from the USGS restful API.
 
-Master branch is the production environment. Other branch is a copy of the POC of the webserver and insertion backend.
+## Deployment
+Master branch is the production environment. Other branches are experimental versions of the insertion backend.
+
+## Hardware
+Designed to be run on a Raspberry Pi 2 using a crontab entry.
