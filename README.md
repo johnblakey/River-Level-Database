@@ -1,5 +1,5 @@
 # River-Level-Database
-Sqlite database to save water values from the USGS restful API.
+Sqlite database to save water values from the USGS restful API. Cron job inserts values into the database. Nodejs server provides an API for access to the database values.
 
 ## Deployment
 Master branch is the production environment. Other branches are experimental versions of the insertion backend.
