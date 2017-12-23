@@ -45,8 +45,8 @@ let sql = `SELECT siteName, dateTime, levelValue, unitCode FROM
             levels
             ON levels.riverId = rivers.RiverId
                 INNER JOIN
-            (SELECT MAX(LevelId) lastLevel FROM levels GROUP BY riverId) maxId
-            ON levels.LevelId = maxId.lastLevel;`;
+            (SELECT MAX(dateTime), LevelId FROM levels GROUP BY riverId) latestEntry
+            ON levels.LevelId = latestEntry.LevelId;`;
 app.get("/api/rivers", function(req, res) {
     exporter.json(sql, (err, json) => {
         if (err) {
