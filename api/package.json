@@ -4,6 +4,7 @@
   "description": "This project will modify an sqlite db with nodejs",
   "main": "connect.js",
   "dependencies": {
+    "cors": "^2.8.4",
     "express": "^4.16.2",
     "sqlite-json": "^1.0.1",
     "sqlite3": "^3.1.13"

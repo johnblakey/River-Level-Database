@@ -3,6 +3,7 @@
  */
 
 const express = require("express");
+const cors = require('cors');
 const bodyParser = require("body-parser");
 // sqlite3 to connect to db, .verbose() can be removed to reduce the stack trace
 const sqlite3 = require("sqlite3").verbose();
@@ -10,7 +11,7 @@ const sqliteJSON = require('sqlite-json');
 let exporter;
 
 let app = express();
-app.use(bodyParser.json());
+app.use(cors(), bodyParser.json());
 
 /** open sqlite database from local file */
 let dbSource = "/home/jb/Development/Production/River-Level-Database/db/levels.db";
