@@ -39,7 +39,7 @@ function handleError(res, reason, message, code) {
 }
 
 /* return all river levels */
-let sql = `SELECT siteName, ,dateTime, levelValue, unitCode FROM
+let sql = `SELECT siteName, dateTime, levelValue, unitCode FROM
             rivers
                 INNER JOIN
             levels
