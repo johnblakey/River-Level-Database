@@ -129,17 +129,32 @@ function insertSetup(db, usgs) {
             // Note this is a closure to allow the for loop 'i' to be captured
             (function(counter) {
                 var level = usgs.value.timeSeries[counter].values[0].value[0].value;
-		console.log("level:", level);
-                var dateTime = usgs.value.timeSeries[counter].values[0].value[0].dateTime;
-		console.log("dateTime:", dateTime);
+		        console.log("level:", level);
+
+                var dateTimeRaw = usgs.value.timeSeries[counter].values[0].value[0].dateTime;
+		        console.log("Raw dateTime:", dateTimeRaw);
+
+		        dateTime = convertDateTime(dateTimeRaw);
+		        console.log("dateTime returned from function:", dateTime);
+
                 var siteCode = usgs.value.timeSeries[counter].sourceInfo.siteCode[0].value;
-		console.log("siteCode:", siteCode);
+		        console.log("siteCode:", siteCode);
 
                 dbInsert(db, siteCode, level, dateTime, returnList, returnCount);
 
             })(i);
         }
     });
+}
+
+function convertDateTime(dateTimeRaw) {
+    var regex = /^(?:[^-]*\-){2}([^-]*)/;   // up to but not including 2nd -
+    var dateTimeObj = regex.exec(dateTimeRaw);
+    var dateTime = dateTimeObj[0];
+    console.log("Interim dateTime:", dateTime);
+    dateTime = dateTime.replace("T", " ");
+    console.log("SQLite datetime_text version:", dateTime);
+    return dateTime
 }
 
 // main start
