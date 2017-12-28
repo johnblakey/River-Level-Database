@@ -3,30 +3,50 @@ DROP TABLE rivers;
 CREATE TABLE "rivers" ( 
 [RiverId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
 [siteName] NVARCHAR(128) NOT NULL, 
-[defaultTimezone] NVARCHAR(32) NOT NULL,
+[defaultTimezone] NVARCHAR(8) NOT NULL,
 [unitCode] NVARCHAR(8) NOT NULL,
-[siteCode] NVARCHAR(16) NOT NULL);
+[siteCode] NVARCHAR(16) NOT NULL,
+[class] NVARCHAR(8) NOT NULL,
+[low] INTEGER NOT NULL,
+[high] INTEGER NOT NULL
+);
 
 INSERT INTO rivers (
 	siteName,
 	defaultTimeZone,
 	unitCode,
-	siteCode)
+	siteCode,
+	class,
+	low,
+	high
+	)
 VALUES (
 	"CLEAR CREEK AT GOLDEN, CO",
 	"MST",
 	"f3/s",
-	"06719505"),
-	("COLORADO RIVER NEAR KREMMLING, CO",
+	"06719505",
+	"IV",
+	250,
+	1000),
+	("GORE CANYON - COLORADO RIVER NEAR KREMMLING, CO",
 	"MST",
 	"ft3/s",
-	"09058000"),
-	("ARKANSAS RIVER AT PARKDALE, CO",
+	"09058000",
+	"IV-V",
+	375,
+	4000),
+	("ROYAL GORGE - ARKANSAS RIVER AT PARKDALE, CO",
 	"MST",
 	"ft3/s",
-	"07094500"),
-	("TELLICO RIVER AT TELLICO PLAINS, TN",
+	"07094500",
+	"III-IV",
+	300,
+	7000),
+	("UPPER TELLICO - TELLICO RIVER AT TELLICO PLAINS, TN",
 	"EST",
 	"ft3/s",
-	"03518500"
+	"03518500",
+	"III-IV",
+	280,
+	1500
 );
