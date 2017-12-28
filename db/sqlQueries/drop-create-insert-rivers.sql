@@ -1,0 +1,32 @@
+DROP TABLE rivers;
+
+CREATE TABLE "rivers" ( 
+[RiverId] INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, 
+[siteName] NVARCHAR(128) NOT NULL, 
+[defaultTimezone] NVARCHAR(32) NOT NULL,
+[unitCode] NVARCHAR(8) NOT NULL,
+[siteCode] NVARCHAR(16) NOT NULL);
+
+INSERT INTO rivers (
+	siteName,
+	defaultTimeZone,
+	unitCode,
+	siteCode)
+VALUES (
+	"CLEAR CREEK AT GOLDEN, CO",
+	"MST",
+	"f3/s",
+	"06719505"),
+	("COLORADO RIVER NEAR KREMMLING, CO",
+	"MST",
+	"ft3/s",
+	"09058000"),
+	("ARKANSAS RIVER AT PARKDALE, CO",
+	"MST",
+	"ft3/s",
+	"07094500"),
+	("TELLICO RIVER AT TELLICO PLAINS, TN",
+	"EST",
+	"ft3/s",
+	"03518500"
+);

@@ -16,7 +16,7 @@ function updateDbStart() {
 
 /** json from waterservices.usgs.gov */
 function getJSON() {
-    var url = "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09058000,06719505,07094500&parameterCd=00060&siteStatus=all";
+    var url = "https://waterservices.usgs.gov/nwis/iv/?format=json&sites=09058000,06719505,07094500,03518500&parameterCd=00060&siteStatus=all";
 
     // json response variable
     var usgsJSON;
